@@ -1,0 +1,22 @@
+{
+  "name": "gsearch",
+  "version": "1.0.0",
+  "description": "This app scrapes Google search result",
+  "main": "",
+  "repository": "https://github.com/keiya01/gsearch",
+  "author": "keiya01",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "typescript": "^3.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0.4",
+    "jest": "^24.8.0",
+    "ts-node": "^8.2.0"
+  }
+}
