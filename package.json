@@ -12,6 +12,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/puppeteer": "^1.12.4",
+    "puppeteer": "^1.17.0",
     "typescript": "^3.5.1"
   },
   "devDependencies": {
