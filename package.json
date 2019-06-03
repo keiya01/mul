@@ -2,10 +2,19 @@
   "name": "gsearch",
   "version": "1.0.0",
   "description": "This app scrapes Google search result",
-  "main": "",
+  "keywords": [
+    "search",
+    "multiple search",
+    "tool"
+  ],
+  "main": "./dist/index.js",
   "repository": "https://github.com/keiya01/gsearch",
   "author": "keiya01",
   "license": "MIT",
+  "preferGlobal": true,
+  "bin": {
+    "gsearch": "bin/gsearch"
+  },
   "scripts": {
     "start": "ts-node",
     "build": "tsc",
