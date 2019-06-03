@@ -1,10 +1,13 @@
 # mul
+![sample](https://github.com/keiya01/mul/blob/master/mul.gif)
 
-# description
+# Description
 - mul is tool to search multiple word.
 - The search is done asynchronously. 
 - Up to three processes are performed asynchronously.
 - The way search is scraping Google search result by inputted multiple word.
 
-# sample
-![sample](https://github.com/keiya01/mul/blob/master/mul.gif)
+# Set Up
+- get_file: `git clone https://github.com/keiya01/mul.git`
+- set_path: `export PATH="your_dir_path/mul/bin:$PATH"`
+- search: `mul -s "mul github"`
