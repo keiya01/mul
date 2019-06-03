@@ -16,12 +16,6 @@ const Colors = {
   magenta: color('35'),
 };
 
-const newStdin = () => {
-  const stdin = process.stdin;
-  stdin.setEncoding("utf-8");
-  return stdin;
-}
-
 const scrape = async (searchWord: string) => {
   const uri = `https://www.google.co.jp/search?num=5&q=${searchWord}`;
   const browser = await puppeteer.launch();
@@ -96,19 +90,26 @@ const asyncSearch = (links: Link[], searchWords: string[]) => {
 }
 
 const main = () => {
-  console.log("Search inputted word to find 5 urls of each words");
+  const cmdArgs = process.argv;
 
-  const stdin = newStdin();
+  let isSetCmd = false;
+  const searchWords: string[] = [];
+  cmdArgs.forEach(arg => {
+    if(isSetCmd) {
+      searchWords.push(arg);
+      return;
+    }
 
-  process.stdout.write("gsearch > ");
-  stdin.on("data", async (_data: string) => {
-    const data = _data.slice(0, _data.length - 1);
-
-    // Make user enter data with / break
-    const searchWords = data.split("/");
-
-    asyncSearch([], searchWords);
+    if(arg === "-s" || arg === "--set") {
+      isSetCmd = true;
+      return;
+    }
   });
+
+  if(searchWords.length !== 0) {
+    process.stdout.write("gsearch > ");
+    asyncSearch([], searchWords);
+  }
 }
 
 main();
