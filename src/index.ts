@@ -15,12 +15,17 @@ const scrape = async (searchWord: string) => {
   const links = await page.evaluate(`
     function getUri() {
       const elms = document.querySelector('#rso').querySelectorAll('.r');
-      const hrefs = [];
+      const links = [];
       for(let i = 0; i < elms.length; i++) {
         const elm = elms[i];
-        hrefs.push(elm.firstChild.getAttribute("href"));
+        const aTag = elm.firstChild;
+        const link = {
+          title: aTag.querySelector('.LC20lb').innerText,
+          url: aTag.getAttribute('href'),
+        }
+        links.push(link);
       }
-      return hrefs;
+      return links;
     }
     getUri();
   `);
@@ -30,11 +35,54 @@ const scrape = async (searchWord: string) => {
   return links;
 }
 
+const asyncSearch = (links: Link[], searchWords: string[]) => {
+  let index = 0, running = 0, limitRunning = 3, totalCompleted = 0;
+  const search = (links: Link[], searchWords: string[]) => {
+    if (totalCompleted === searchWords.length) {
+      console.log(links);
+      process.exit();
+    }
+
+    while (running < limitRunning && index < searchWords.length) {
+      const word = searchWords[index];
+      if (word === "") {
+        index++;
+        continue;
+      }
+
+      console.log(`Searching "${word}" now ...`);
+      scrape(word).then((searchResult: SearchResult[]) => {
+        running--;
+        totalCompleted++;
+        links.push({
+          searchWord: word,
+          links: searchResult
+        });
+        search(links, searchWords);
+      });
+
+      running++;
+      index++;
+    }
+  }
+  search(links, searchWords);
+}
+
+interface SearchResult {
+  title: string;
+  url: string;
+}
+
+interface Link {
+  searchWord: string;
+  links: SearchResult[];
+}
+
 const main = () => {
   console.log("Search inputted word to find 5 urls of each words");
 
   const stdin = newStdin();
-  
+
   process.stdout.write("gsearch > ");
   stdin.on("data", async (_data: string) => {
     const data = _data.slice(0, _data.length - 1);
@@ -42,24 +90,7 @@ const main = () => {
     // Make user enter data with / break
     const searchWords = data.split("/");
 
-    const asyncSearch = searchWords.map(async word => {
-      if(word === "") {
-        console.log("Can not empty");
-        process.stdout.write("gsearch > ");
-        return;
-      }
-      
-      if(word === "exit\n") {
-        console.log("done!\n");
-        process.exit();
-      }
-      
-      console.log(`Searching "${word}" now ...`);
-      return await scrape(word);
-    });
-
-    console.log(await Promise.all(asyncSearch));
-    process.stdout.write("gsearch > ");
+    asyncSearch([], searchWords);
   });
 }
 
