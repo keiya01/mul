@@ -12,8 +12,8 @@ interface Link {
 
 const color = (colorNum: string) => (text: string) => `\u001b[${colorNum}m${text}\u001b[0m`;
 const Colors = {
-  blue: color('34'),
   magenta: color('35'),
+  cyan: color('36'),
 };
 
 const scrape = async (searchWord: string) => {
@@ -50,7 +50,7 @@ const formatSearchResult = (searchResult: Link[]) => {
     console.log(`${Colors.magenta(searchWord)}`);
     links.map(({ title, url }) => {
       console.log(` - ${title}`);
-      console.log(`   ${Colors.blue(url)}`);
+      console.log(`   ${Colors.cyan(url)}`);
     });
     process.stdin.write("\n");
   });
