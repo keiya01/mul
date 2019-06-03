@@ -1,5 +1,5 @@
 {
-  "name": "gsearch",
+  "name": "mul",
   "version": "1.0.0",
   "description": "This app scrapes Google search result",
   "keywords": [
@@ -8,13 +8,10 @@
     "tool"
   ],
   "main": "./dist/index.js",
-  "repository": "https://github.com/keiya01/gsearch",
+  "repository": "https://github.com/keiya01/mul",
   "author": "keiya01",
   "license": "MIT",
   "preferGlobal": true,
-  "bin": {
-    "gsearch": "bin/gsearch"
-  },
   "scripts": {
     "start": "ts-node",
     "build": "tsc",
