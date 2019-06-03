@@ -10,4 +10,4 @@
 # Set Up
 - get_file: `git clone https://github.com/keiya01/mul.git`
 - set_path: `export PATH="your_dir_path/mul/bin:$PATH"`
-- search: `mul -s "mul github"`
+- search: `mul -s github`
