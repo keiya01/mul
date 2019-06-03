@@ -5,7 +5,7 @@
 - mul is tool to search multiple word.
 - The search is done asynchronously. 
 - Up to three processes are performed asynchronously.
-- The way search is scraping Google search result by inputted multiple word.
+- The way search is scraping search result by inputted multiple word.
 
 # Set Up
 - get_file: `git clone https://github.com/keiya01/mul.git`
