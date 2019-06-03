@@ -1,7 +1,7 @@
 {
   "name": "mul",
   "version": "1.0.0",
-  "description": "This app scrapes Google search result",
+  "description": "mul is tool to search multiple word.",
   "keywords": [
     "search",
     "multiple search",
@@ -12,6 +12,9 @@
   "author": "keiya01",
   "license": "MIT",
   "preferGlobal": true,
+  "bin": {
+    "mul": "./dist/index.js"
+  },
   "scripts": {
     "start": "ts-node",
     "build": "tsc",

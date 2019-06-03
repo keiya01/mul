@@ -12,6 +12,7 @@ interface Link {
 
 const color = (colorNum: string) => (text: string) => `\u001b[${colorNum}m${text}\u001b[0m`;
 const Colors = {
+  red: color('31'),
   magenta: color('35'),
   cyan: color('36'),
 };
@@ -46,6 +47,7 @@ const scrape = async (searchWord: string) => {
 }
 
 const formatSearchResult = (searchResult: Link[]) => {
+  process.stdin.write("\n");
   searchResult.map(({ searchWord, links }) => {
     console.log(`${Colors.magenta(searchWord)}`);
     links.map(({ title, url }) => {
@@ -80,6 +82,11 @@ const asyncSearch = (links: Link[], searchWords: string[]) => {
           links: searchResult
         });
         search(links, searchWords);
+      }).catch(() => {
+        running--;
+        totalCompleted++;
+        console.log(Colors.red(`[ERROR] Could not fetch this data: ${word}`));
+        search(links, searchWords);
       });
 
       running++;
@@ -107,9 +114,8 @@ const main = () => {
   });
 
   if(searchWords.length !== 0) {
-    process.stdout.write("gsearch > ");
     asyncSearch([], searchWords);
   }
 }
 
-module.exports = main;
+main();
