@@ -1,5 +1,15 @@
 import puppeteer from "puppeteer";
 
+interface SearchResult {
+  title: string;
+  url: string;
+}
+
+interface Link {
+  searchWord: string;
+  links: SearchResult[];
+}
+
 const newStdin = () => {
   const stdin = process.stdin;
   stdin.setEncoding("utf-8");
@@ -35,11 +45,22 @@ const scrape = async (searchWord: string) => {
   return links;
 }
 
+const formatSearchResult = (searchResult: Link[]) => {
+  searchResult.map(({searchWord, links}) => {
+    console.log(`${searchWord}`);
+    links.map(({title, url}) => {
+      console.log(` - ${title}`);
+      console.log(`   ${url}`);
+    });
+    process.stdin.write("\n");
+  });
+}
+
 const asyncSearch = (links: Link[], searchWords: string[]) => {
   let index = 0, running = 0, limitRunning = 3, totalCompleted = 0;
   const search = (links: Link[], searchWords: string[]) => {
     if (totalCompleted === searchWords.length) {
-      console.log(links);
+      formatSearchResult(links);
       process.exit();
     }
 
@@ -66,16 +87,6 @@ const asyncSearch = (links: Link[], searchWords: string[]) => {
     }
   }
   search(links, searchWords);
-}
-
-interface SearchResult {
-  title: string;
-  url: string;
-}
-
-interface Link {
-  searchWord: string;
-  links: SearchResult[];
 }
 
 const main = () => {
