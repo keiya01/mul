@@ -10,6 +10,12 @@ interface Link {
   links: SearchResult[];
 }
 
+const color = (colorNum: string) => (text: string) => `\u001b[${colorNum}m${text}\u001b[0m`;
+const Colors = {
+  blue: color('34'),
+  magenta: color('35'),
+};
+
 const newStdin = () => {
   const stdin = process.stdin;
   stdin.setEncoding("utf-8");
@@ -46,11 +52,11 @@ const scrape = async (searchWord: string) => {
 }
 
 const formatSearchResult = (searchResult: Link[]) => {
-  searchResult.map(({searchWord, links}) => {
-    console.log(`${searchWord}`);
-    links.map(({title, url}) => {
+  searchResult.map(({ searchWord, links }) => {
+    console.log(`${Colors.magenta(searchWord)}`);
+    links.map(({ title, url }) => {
       console.log(` - ${title}`);
-      console.log(`   ${url}`);
+      console.log(`   ${Colors.blue(url)}`);
     });
     process.stdin.write("\n");
   });
