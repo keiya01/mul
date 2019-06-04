@@ -66,19 +66,18 @@ const asyncSearch = (links: Link[], searchWords: string[]) => {
   loader.print(0, searchWords[0]);
   const search = (links: Link[], searchWords: string[]) => {
     if (totalCompleted === searchWords.length) {
-      loader.print(100, searchWords[searchWords.length - 1]);
+      loader.print(100, "");
       formatSearchResult(links);
       process.exit();
     }
-
+    
     while (running < limitRunning && index < searchWords.length) {
       const word = searchWords[index];
       if (word === "") {
         index++;
         continue;
       }
-
-      loader.print(loader.percentage + 3, word);
+      
       scrape(word).then((searchResult: SearchResult[]) => {
         loader.print(loader.percentage + 3, word);
         running--;
@@ -89,14 +88,12 @@ const asyncSearch = (links: Link[], searchWords: string[]) => {
         });
         loader.print(totalCompleted / searchWords.length * 100, word);
         search(links, searchWords);
-        loader.print(loader.percentage + 5, word);
       }).catch(() => {
         running--;
         totalCompleted++;
         console.log(Colors.red(`[ERROR] Could not fetch this data: ${word}`));
         loader.print(totalCompleted / searchWords.length * 100, word);
         search(links, searchWords);
-        loader.print(loader.percentage + 5, word);
       });
 
       running++;

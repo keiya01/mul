@@ -16,7 +16,7 @@ export default class Loader {
     const percentage = Math.floor(_percentage);
 
     if (percentage === 100) {
-      process.stdout.write("                                                                                                                                                    \r");
+      process.stdout.write("\033c");
       process.stdout.write(`Completed! ... ${percentage}%\r`);
       return;
     }
@@ -31,7 +31,7 @@ export default class Loader {
         return;
       }
       // reset
-      process.stdout.write("                                                                                                                                                    \r");
+      process.stdout.write("\033c");
       process.stdout.write(`Searching ${word} ... ${this.percentage + count}%\r`);
       count++;
     }, 100);
