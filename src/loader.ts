@@ -12,7 +12,9 @@ export default class Loader {
     timer && clearInterval(timer);
   }
 
-  print(percentage: number, word: string) {
+  print(_percentage: number, word: string) {
+    const percentage = Math.floor(_percentage);
+
     if (percentage === 100) {
       process.stdout.write("                                                                                                                                                    \r");
       process.stdout.write(`Completed! ... ${percentage}%\r`);
@@ -24,7 +26,7 @@ export default class Loader {
     let count = 1;
     const diff = percentage - this.percentage;
     const interval = setInterval(() => {
-      if (count > diff) {
+      if (count >= diff) {
         this.resetTimer();
         return;
       }
