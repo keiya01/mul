@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import Loader from "./loader";
 
 interface SearchResult {
   title: string;
@@ -16,6 +17,8 @@ const Colors = {
   magenta: color('35'),
   cyan: color('36'),
 };
+
+const loader = new Loader(0);
 
 const scrape = async (searchWord: string) => {
   const uri = `https://www.google.co.jp/search?num=5&q=${searchWord}`;
@@ -60,8 +63,10 @@ const formatSearchResult = (searchResult: Link[]) => {
 
 const asyncSearch = (links: Link[], searchWords: string[]) => {
   let index = 0, running = 0, limitRunning = 3, totalCompleted = 0;
+  loader.print(0, searchWords[0]);
   const search = (links: Link[], searchWords: string[]) => {
     if (totalCompleted === searchWords.length) {
+      loader.print(100, searchWords[searchWords.length - 1]);
       formatSearchResult(links);
       process.exit();
     }
@@ -73,20 +78,25 @@ const asyncSearch = (links: Link[], searchWords: string[]) => {
         continue;
       }
 
-      console.log(`Searching "${word}" now ...`);
+      loader.print(loader.percentage + 3, word);
       scrape(word).then((searchResult: SearchResult[]) => {
+        loader.print(loader.percentage + 3, word);
         running--;
         totalCompleted++;
         links.push({
           searchWord: word,
           links: searchResult
         });
+        loader.print(totalCompleted / searchWords.length * 100, word);
         search(links, searchWords);
+        loader.print(loader.percentage + 5, word);
       }).catch(() => {
         running--;
         totalCompleted++;
         console.log(Colors.red(`[ERROR] Could not fetch this data: ${word}`));
+        loader.print(totalCompleted / searchWords.length * 100, word);
         search(links, searchWords);
+        loader.print(loader.percentage + 5, word);
       });
 
       running++;
@@ -102,18 +112,18 @@ const main = () => {
   let isSetCmd = false;
   const searchWords: string[] = [];
   cmdArgs.forEach(arg => {
-    if(isSetCmd) {
+    if (isSetCmd) {
       searchWords.push(arg);
       return;
     }
 
-    if(arg === "-s" || arg === "--set") {
+    if (arg === "-s" || arg === "--set") {
       isSetCmd = true;
       return;
     }
   });
 
-  if(searchWords.length !== 0) {
+  if (searchWords.length !== 0) {
     asyncSearch([], searchWords);
   }
 }
