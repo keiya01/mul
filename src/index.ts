@@ -18,7 +18,7 @@ const Colors = {
   cyan: color('36'),
 };
 
-const loader = new Loader(0);
+const loader = new Loader();
 
 const scrape = async (searchWord: string) => {
   const uri = `https://www.google.co.jp/search?num=5&q=${searchWord}`;

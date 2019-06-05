@@ -2,10 +2,10 @@ export default class Loader {
   public percentage: number;
   public timerQueue: NodeJS.Timeout[];
   public progressBar: string[];
-  public totalSpace: Readonly<number>;
+  public totalSpace: number;
 
-  constructor(percentage: number) {
-    this.percentage = percentage;
+  constructor() {
+    this.percentage = 0;
     this.timerQueue = [];
     const columns = process.stdout.columns || 50;
     const spaces = this.getProgressBar(columns / 2);
@@ -67,16 +67,26 @@ export default class Loader {
   }
 
   updateProgressBar(percentage: number) {
-    const totalIncreasingAmount = Math.floor(this.totalSpace * (percentage / 100 + 1));
+    const totalIncreasingAmount = Math.floor(this.totalSpace * (percentage / 100));
+    const initialProgressBar = this.progressBar;
+    
+    let progressBarPoints: string[] = [];
+    const advanceProgressBar = () => {
+      const progressStaus = progressBarPoints.length;
 
-    const advanceProgressBar = (count: number) => {
-      if (count >= totalIncreasingAmount) {
+      if (progressStaus >= totalIncreasingAmount) {
         return true;
       }
 
+      progressBarPoints.push("=");
+
+      const remainingSpace = this.progressBar.length - 1;
+      console.log(initialProgressBar.slice(2, remainingSpace - progressStaus))
       this.progressBar = [
-        this.progressBar[0],
-        ...this.progressBar.slice(2)
+        "[",
+        ...progressBarPoints,
+        ...initialProgressBar.slice(2, remainingSpace - progressStaus),
+        "]"
       ];
 
       return false;
@@ -103,7 +113,8 @@ export default class Loader {
       // reset
       process.stdout.write("\\033c");
       process.stdout.write(`${word} ${this.progressBar.join("")} ... ${this.percentage + count}`);
-      advanceProgressBar(count++);
+      advanceProgressBar();
+      count++;
     }, 100);
 
     this.timerQueue.push(interval);
