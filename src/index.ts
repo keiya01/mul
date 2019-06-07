@@ -63,10 +63,10 @@ const formatSearchResult = (searchResult: Link[]) => {
 
 const asyncSearch = (links: Link[], searchWords: string[]) => {
   let index = 0, running = 0, limitRunning = 3, totalCompleted = 0;
-  loader.print(0, searchWords[0]);
+  loader.printProgressBar(0, searchWords[0]);
   const search = (links: Link[], searchWords: string[]) => {
     if (totalCompleted === searchWords.length) {
-      loader.print(100, "");
+      loader.printProgressBar(100, "");
       formatSearchResult(links);
       process.exit();
     }
@@ -79,20 +79,20 @@ const asyncSearch = (links: Link[], searchWords: string[]) => {
       }
       
       scrape(word).then((searchResult: SearchResult[]) => {
-        loader.print(loader.percentage + 3, word);
+        loader.printProgressBar(loader.percentage + 3, word);
         running--;
         totalCompleted++;
         links.push({
           searchWord: word,
           links: searchResult
         });
-        loader.print(totalCompleted / searchWords.length * 100, word);
+        loader.printProgressBar(totalCompleted / searchWords.length * 100, word);
         search(links, searchWords);
       }).catch(() => {
         running--;
         totalCompleted++;
-        console.log(Colors.red(`[ERROR] Could not fetch this data: ${word}`));
-        loader.print(totalCompleted / searchWords.length * 100, word);
+        console.log(Colors.red(`\n[ERROR] Could not fetch this data: ${word}`));
+        loader.printProgressBar(totalCompleted / searchWords.length * 100, word);
         search(links, searchWords);
       });
 

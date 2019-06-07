@@ -1,8 +1,11 @@
+const readLine = require("readline");
+
 export default class Loader {
   public percentage: number;
   public timerQueue: NodeJS.Timeout[];
   public progressBar: string[];
   public totalSpace: number;
+  private progressBarPoints: string[];
 
   constructor() {
     this.percentage = 0;
@@ -11,10 +14,7 @@ export default class Loader {
     const spaces = this.getProgressBar(columns / 2);
     this.progressBar = spaces;
     this.totalSpace = spaces.length;
-  }
-
-  initializePercentage(percentage: number) {
-    return Math.floor(percentage);
+    this.progressBarPoints = [];
   }
 
   getProgressBar(columns: number) {
@@ -41,10 +41,11 @@ export default class Loader {
   }
 
   print(_percentage: number, word: string) {
-    const percentage = this.initializePercentage(_percentage);
+    const percentage = Math.floor(_percentage);
 
     if (percentage === 100) {
-      process.stdout.write("\\033c");
+      readLine.clearLine(process.stdout, 0);
+      readLine.cursorTo(process.stdout, 0, null);
       process.stdout.write(`Completed! ... ${percentage}%\r`);
       return;
     }
@@ -57,7 +58,8 @@ export default class Loader {
         return;
       }
       // reset
-      process.stdout.write("\\033c");
+      readLine.clearLine(process.stdout, 0);
+      readLine.cursorTo(process.stdout, 0, null);
       process.stdout.write(`Searching ${word} ... ${this.percentage + count}%\r`);
       count++;
     }, 100);
@@ -66,26 +68,48 @@ export default class Loader {
     this.percentage = percentage;
   }
 
-  updateProgressBar(percentage: number) {
-    const totalIncreasingAmount = Math.floor(this.totalSpace * (percentage / 100));
-    const initialProgressBar = this.progressBar;
-    
-    let progressBarPoints: string[] = [];
-    const advanceProgressBar = () => {
-      const progressStaus = progressBarPoints.length;
+  calculateProgressPercentage = () => {
+    const totalProgressBarPoints = this.progressBarPoints.length - 1;
+    // Measure progress of progress bar
+    const progressPercentage = Math.floor((totalProgressBarPoints / this.totalSpace) * 100);
 
-      if (progressStaus >= totalIncreasingAmount) {
+    return progressPercentage;
+  }
+
+  modifyProgressBar = (percentage: number) => {
+    const prevProgressPercentage = this.calculateProgressPercentage();
+    if (0 < prevProgressPercentage && prevProgressPercentage < percentage) {
+      const modifiedProgressBarPercentage = percentage - prevProgressPercentage;
+      const prevTotalIncreasingAmount = Math.floor(this.totalSpace * (modifiedProgressBarPercentage / 100));
+      [...Array(prevTotalIncreasingAmount)].forEach(() => {
+        this.progressBarPoints.push("=");
+      });
+
+      const totalProgressBarPoints = this.progressBarPoints.length;
+      this.progressBar = [
+        "[",
+        ...this.progressBarPoints,
+        ...this.progressBar.slice(totalProgressBarPoints, this.progressBar.length - 2),
+        "]"
+      ];
+    }
+  }
+
+  updateProgressBar(percentage: number) {
+    const prevProgressBar = this.progressBar;
+
+    this.modifyProgressBar(percentage);
+
+    const advanceProgressBar = () => {
+      if (this.progressBarPoints.length >= this.totalSpace) {
         return true;
       }
 
-      progressBarPoints.push("=");
-
-      const remainingSpace = this.progressBar.length - 1;
-      console.log(initialProgressBar.slice(2, remainingSpace - progressStaus))
+      const totalProgressBarPoints = this.progressBarPoints.push("=");
       this.progressBar = [
         "[",
-        ...progressBarPoints,
-        ...initialProgressBar.slice(2, remainingSpace - progressStaus),
+        ...this.progressBarPoints,
+        ...prevProgressBar.slice(totalProgressBarPoints, this.progressBar.length - 2),
         "]"
       ];
 
@@ -96,7 +120,15 @@ export default class Loader {
   }
 
   printProgressBar(_percentage: number, word: string) {
-    const percentage = this.initializePercentage(_percentage);
+    if (this.timerQueue.length !== 0) {
+      this.resetTimer();
+    }
+
+    const percentage = Math.floor(_percentage);
+    if(percentage === 0) {
+      process.stdout.write(`${word} ${this.progressBar.join("")} ... 0%\r`);
+    }
+
     const columns = process.stdout.columns;
     if (!columns) {
       return;
@@ -105,14 +137,19 @@ export default class Loader {
     let count = 1;
     const diff = percentage - this.percentage;
     const advanceProgressBar = this.updateProgressBar(percentage);
+    if (percentage === 100) {
+      process.stdout.write(`completed! ${this.progressBar.join("")} ... 100%\r`);
+    }
+
     const interval = setInterval(() => {
-      if (count >= diff) {
+      if (count > diff) {
         this.resetTimer();
         return;
       }
       // reset
-      process.stdout.write("\\033c");
-      process.stdout.write(`${word} ${this.progressBar.join("")} ... ${this.percentage + count}`);
+      readLine.clearLine(process.stdout, 0);
+      readLine.cursorTo(process.stdout, 0, null);
+      process.stdout.write(`${word} ${this.progressBar.join("")} ... ${this.percentage + count}%\r`);
       advanceProgressBar();
       count++;
     }, 100);
