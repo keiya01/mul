@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer";
-import Loader from "./loader";
+import Loader from "progress-loader";
 
 interface SearchResult {
   title: string;
