@@ -7,7 +7,7 @@
 - Up to three processes are performed asynchronously.
 - The way search is scraping search result by inputted multiple word.
 
-# Set Up
+# Setup
 - get_file: `git clone https://github.com/keiya01/mul.git`
 - setup: `yarn && yarn build`
 - set_path: `export PATH="your_dir_path/mul/bin:$PATH"`
