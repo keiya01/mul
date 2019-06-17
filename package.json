@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "ts-node",
-    "build": "cd bin && nexe ../dist -n mul",
+    "build": "tsc && cd bin && nexe ../dist -n mul",
     "test": "jest"
   },
   "jest": {
