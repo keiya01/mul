@@ -114,7 +114,7 @@ const main = () => {
       return;
     }
 
-    if (arg === "-s" || arg === "--set") {
+    if (arg === "-s" || arg === "--search") {
       isSetCmd = true;
       return;
     }

@@ -9,5 +9,11 @@
 
 # Set Up
 - get_file: `git clone https://github.com/keiya01/mul.git`
+- setup: `yarn && yarn build`
 - set_path: `export PATH="your_dir_path/mul/bin:$PATH"`
-- search: `mul -s github`
+- usage: `mul -s "search word"`
+
+# How to search
+- option: `-s | --search`
+- single word: `github`
+- multiple words: `"How to use github"`
